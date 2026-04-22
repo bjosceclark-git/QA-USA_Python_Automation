@@ -15,7 +15,7 @@ class TestUrbanRoutes:
         # Add in S8
         print('function created for set route')
         pass
-    
+
     def test_select_plan(self):
         # Add in S8
         print('function created for select plan')
