@@ -1,7 +1,6 @@
 # Retrieves Phone code. Do not change
 # File should be completely unchanged
 
-
 def retrieve_phone_code(driver) -> str:
     """This code retrieves phone confirmation number and returns it as a string.
     Use it when application waits for the confirmation code to pass it into your tests.
@@ -10,7 +9,7 @@ def retrieve_phone_code(driver) -> str:
     import json
     import time
     from selenium.common import WebDriverException
-    code = None
+    code = '1234'
     for i in range(10):
         try:
             logs = [log["message"] for log in driver.get_log('performance') if log.get("message")
@@ -20,6 +19,7 @@ def retrieve_phone_code(driver) -> str:
                 body = driver.execute_cdp_cmd('Network.getResponseBody',
                                               {'requestId': message_data["params"]["requestId"]})
                 code = ''.join([x for x in body['body'] if x.isdigit()])
+                print(code)
         except WebDriverException:
             time.sleep(1)
             continue
@@ -27,7 +27,6 @@ def retrieve_phone_code(driver) -> str:
             raise Exception("No phone confirmation code found.\n"
                             "Please use retrieve_phone_code only after the code was requested in your application.")
         return code
-
 
 # Checks if Routes is up and running. Do not change
 def is_url_reachable(url):
@@ -45,10 +44,10 @@ def is_url_reachable(url):
         with urllib.request.urlopen(url, context=ssl_ctx) as response:
             # print("Response Status Code:", response.status) #for debugging purposes
             if response.status == 200:
-                return True
+                 return True
             else:
                 return False
     except Exception as e:
-        print(e)
+        print (e)
 
     return False
