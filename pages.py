@@ -1,13 +1,16 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 import time
+
 
 class UrbanRoutesPage:
     WHERE_FROM = (By.ID, 'from')
     WHERE_TO = (By.ID, 'to')
     CALL_TAXI_BUTTON = (By.XPATH, '//button[@class="button round"]')
-    SUPPORTIVE_TARIFF = (By.XPATH, '//div[@class="tcard"]//div[text()="Supportive"]')
+    SUPPORTIVE_TARIFF = (By.XPATH, '//div[text()="Supportive"]')
     SUPPORTIVE_TARIFF_ACTIVE = (By.CSS_SELECTOR, '.tcard.active .tcard-title')
-    PHONE_NUMBER_BUTTON = (By.XPATH, '//div[@class="np-button"]//div[text()="Phone number"]')
+    PHONE_NUMBER_BUTTON = (By.XPATH, '//div[@class="np-text"]')
     PHONE_NUMBER_INPUT = (By.ID, 'phone')
     PHONE_NUMBER_SUBMIT = (By.XPATH, '//button[text()="Next"]')
     PHONE_CODE_INPUT = (By.ID, 'code')
@@ -21,11 +24,12 @@ class UrbanRoutesPage:
     CARD_LINK_BUTTON = (By.XPATH, '//div[@class="pp-buttons"]//button[text()="Link"]')
     CARD_OPTION = (By.XPATH, '//div[@class="section active"]//div[text()="Card"]')
     DRIVER_COMMENT = (By.CLASS_NAME, 'pp-title')
-    ORDER_SWITCHES = (By.CSS_SELECTOR, 'input.switch-input')
+    ORDER_SWITCHES = (By.CLASS_NAME, 'r-sw')
+    ORDER_SWITCHES_CHECKER = (By.CSS_SELECTOR, '.switch-input')
     ADD_COUNTER = (By.CLASS_NAME, 'counter-plus')
     COUNTER_AMOUNT = (By.CLASS_NAME, 'counter-value')
     ORDER_TAXI = (By.CLASS_NAME, 'smart-button')
-    ORDER_SUCCESS_VERIFICATION = (By.CLASS_NAME, 'order-header-title')
+    ORDER_SUCCESS_VERIFICATION = (By.CLASS_NAME, 'order-body')
     COMMENT_TO_DRIVER = (By.ID, "comment")
 
     def __init__(self, driver):
@@ -47,9 +51,8 @@ class UrbanRoutesPage:
     def verify_from_location(self):
         return self.driver.find_element(*self.WHERE_FROM).text
 
-
     def click_call_taxi_button(self):
-        self.driver.find_element(*self.CALL_TAXI_BUTTON).click()
+        WebDriverWait(self.driver, 3).until(expected_conditions.element_to_be_clickable(self.CALL_TAXI_BUTTON)).click()
 
     def get_active_plan_title(self):
         return self.driver.find_element(*self.SUPPORTIVE_TARIFF_ACTIVE).text
@@ -77,7 +80,6 @@ class UrbanRoutesPage:
     def phone_number_testing(self, phone_number):
         self.click_phone_number()
         self.enter_phone_number(phone_number)
-        time.sleep(3)
         self.submit_phone_number()
 
     def resend_phone_code(self):
@@ -128,7 +130,14 @@ class UrbanRoutesPage:
         self.verify_card_submission()
 
     def blanket_and_handkerchiefs_order(self):
-        self.driver.find_element(*self.ORDER_SWITCHES)
+        self.driver.find_element(*self.ORDER_SWITCHES).click()
+
+    def get_blanket_and_handkerchiefs_option_checked(self):
+        switch = self.driver.find_element(*self.ORDER_SWITCHES_CHECKER)
+        return switch.get_property('checked')
+
+    def test_blanket_and_handkerchiefs_order(self):
+        self.blanket_and_handkerchiefs_order()
 
     def ice_creams_add(self, loops):
         for counter_add in range(loops):
@@ -145,12 +154,10 @@ class UrbanRoutesPage:
         self.driver.find_element(*self.ORDER_TAXI).click()
 
     def verify_taxi_arrival(self):
-        return self.driver.find_element(*self.ORDER_SUCCESS_VERIFICATION).text
+        return self.driver.find_element(*self.ORDER_SUCCESS_VERIFICATION).is_displayed()
 
     def comment_to_driver(self, comment):
         self.driver.find_element(*self.COMMENT_TO_DRIVER).send_keys(comment)
 
     def check_driver_message(self):
-        return self.driver.get_attribute(*self.COMMENT_TO_DRIVER)
-
-
+        return self.driver.find_element(*self.COMMENT_TO_DRIVER).get_attribute("value")

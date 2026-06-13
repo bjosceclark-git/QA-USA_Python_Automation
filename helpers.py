@@ -9,7 +9,7 @@ def retrieve_phone_code(driver) -> str:
     import json
     import time
     from selenium.common import WebDriverException
-    code = '1234'
+    code = None
     for i in range(10):
         try:
             logs = [log["message"] for log in driver.get_log('performance') if log.get("message")
@@ -19,7 +19,6 @@ def retrieve_phone_code(driver) -> str:
                 body = driver.execute_cdp_cmd('Network.getResponseBody',
                                               {'requestId': message_data["params"]["requestId"]})
                 code = ''.join([x for x in body['body'] if x.isdigit()])
-                print(code)
         except WebDriverException:
             time.sleep(1)
             continue
