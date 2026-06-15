@@ -22,7 +22,8 @@ class UrbanRoutesPage:
     CARD_CODE_INPUT = (By.CSS_SELECTOR, 'div.card-code input#code')
     TITLE = (By.XPATH, '//div[text()="Adding a card"]')
     CARD_LINK_BUTTON = (By.XPATH, '//div[@class="pp-buttons"]//button[text()="Link"]')
-    CARD_OPTION = (By.XPATH, '//div[@class="section active"]//div[text()="Card"]')
+    CARD_MODAL_CLOSE = (By.XPATH, '//div[@class="payment-picker open"]//button[@class="close-button section-close"]')
+    CARD_OPTION = (By.XPATH, '//div[@class="pp-value-text"]')
     DRIVER_COMMENT = (By.CLASS_NAME, 'pp-title')
     ORDER_SWITCHES = (By.CLASS_NAME, 'r-sw')
     ORDER_SWITCHES_CHECKER = (By.CSS_SELECTOR, '.switch-input')
@@ -117,6 +118,9 @@ class UrbanRoutesPage:
     def submit_card_info(self):
         self.driver.find_element(*self.CARD_LINK_BUTTON).click()
 
+    def close_card_modal(self):
+        self.driver.find_element(*self.CARD_MODAL_CLOSE).click()
+
     def verify_card_submission(self):
         return self.driver.find_element(*self.CARD_OPTION).text
 
@@ -127,6 +131,7 @@ class UrbanRoutesPage:
         self.enter_card_code(card_code)
         self.click_title()
         self.submit_card_info()
+        self.close_card_modal()
         self.verify_card_submission()
 
     def blanket_and_handkerchiefs_order(self):
