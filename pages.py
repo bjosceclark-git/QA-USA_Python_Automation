@@ -142,6 +142,7 @@ class UrbanRoutesPage:
     def ice_creams_add(self, loops):
         for counter_add in range(loops):
             self.driver.find_element(*self.ADD_COUNTER).click()
+            time.sleep(3)
 
     def ice_creams_check(self):
         return self.driver.find_element(*self.COUNTER_AMOUNT).text

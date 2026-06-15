@@ -20,7 +20,6 @@ class TestUrbanRoutes:
         capabilities = DesiredCapabilities.CHROME
         capabilities["goog:loggingPrefs"] = {'performance': 'ALL'}
         cls.driver = webdriver.Chrome()
-        WebDriverWait(cls.driver, 3)
 
     def test_set_route(self):
         self.driver.get(data.URBAN_ROUTES_URL)
@@ -29,10 +28,10 @@ class TestUrbanRoutes:
         urban_routes_page.enter_locations(data.ADDRESS_FROM, data.ADDRESS_TO)
         to_actual_value = urban_routes_page.verify_to_location()
         to_expected_value = data.ADDRESS_TO
-        assert to_actual_value in to_expected_value, f"Expected {to_expected_value} but found {to_actual_value}"
+        assert to_actual_value == to_expected_value, f"Expected {to_expected_value} but found {to_actual_value}"
         from_actual_value = urban_routes_page.verify_from_location()
         from_expected_value = data.ADDRESS_FROM
-        assert from_actual_value in from_expected_value, f"Expected {from_expected_value} but found {from_actual_value}"
+        assert from_actual_value == from_expected_value, f"Expected {from_expected_value} but found {from_actual_value}"
 
     def test_select_plan(self):
         self.driver.get(data.URBAN_ROUTES_URL)
@@ -41,7 +40,7 @@ class TestUrbanRoutes:
         urban_routes_page.getting_to_taxi_menu(data.ADDRESS_FROM, data.ADDRESS_TO)
         actual_value = urban_routes_page.get_active_plan_title()
         expected_value = "Supportive"
-        assert actual_value in expected_value, f"Expected {expected_value} but found {actual_value}"
+        assert actual_value == expected_value, f"Expected {expected_value} but found {actual_value}"
 
     def test_fill_phone_number(self):
         self.driver.get(data.URBAN_ROUTES_URL)
@@ -53,7 +52,7 @@ class TestUrbanRoutes:
         urban_routes_page.phone_code_testing(phone_code)
         actual_value = urban_routes_page.verify_phone_number_confirmed()
         expected_value = data.PHONE_NUMBER
-        assert actual_value in expected_value, f"Expected {expected_value} but found {actual_value}"
+        assert actual_value == expected_value, f"Expected {expected_value} but found {actual_value}"
 
     def test_fill_card(self):
         self.driver.get(data.URBAN_ROUTES_URL)
@@ -62,8 +61,8 @@ class TestUrbanRoutes:
         urban_routes_page.getting_to_taxi_menu(data.ADDRESS_FROM, data.ADDRESS_TO)
         urban_routes_page.card_testing(data.CARD_NUMBER, data.CARD_CODE)
         actual_value = urban_routes_page.verify_card_submission()
-        expected_value = "Card One"
-        assert actual_value in expected_value, f"Expected {expected_value} but found {actual_value}"
+        expected_value = "Card"
+        assert actual_value == expected_value, f"Expected {expected_value} but found {actual_value}"
 
     def test_comment_for_driver(self):
         self.driver.get(data.URBAN_ROUTES_URL)
@@ -73,7 +72,7 @@ class TestUrbanRoutes:
         urban_routes_page.comment_to_driver(data.MESSAGE_FOR_DRIVER)
         actual_value = urban_routes_page.check_driver_message()
         expected_value = data.MESSAGE_FOR_DRIVER
-        assert actual_value in expected_value, f"Expected {expected_value} but found {actual_value}"
+        assert actual_value == expected_value, f"Expected {expected_value} but found {actual_value}"
 
     def test_order_blanket_and_handkerchiefs(self):
         self.driver.get(data.URBAN_ROUTES_URL)
@@ -93,13 +92,17 @@ class TestUrbanRoutes:
         urban_routes_page.ice_creams_test(2)
         actual_value = urban_routes_page.ice_creams_check()
         expected_value = "2"
-        assert actual_value in expected_value, f"Expected {expected_value} but found {actual_value}"
+        assert actual_value == expected_value, f"Expected {expected_value} but found {actual_value}"
 
     def test_car_search_model_appears(self):
         self.driver.get(data.URBAN_ROUTES_URL)
         WebDriverWait(self.driver, 3)
         urban_routes_page = UrbanRoutesPage(self.driver)
         urban_routes_page.getting_to_taxi_menu(data.ADDRESS_FROM, data.ADDRESS_TO)
+        urban_routes_page.phone_number_testing(data.PHONE_NUMBER)
+        phone_code = retrieve_phone_code(self.driver)
+        urban_routes_page.phone_code_testing(phone_code)
+        urban_routes_page.comment_to_driver(data.MESSAGE_FOR_DRIVER)
         urban_routes_page.click_order_taxi()
         actual_value = urban_routes_page.verify_taxi_arrival()
         assert actual_value is True, f"Expected the 'Car search' modal to be displayed but it wasn't displayed."
